@@ -10,14 +10,23 @@ class Window():
         self.clock = pygame.time.Clock()
         self.fps = fps
 
+        self.run_hooks = []
+
+    def register_run_hook(self, hook):
+        self.run_hooks.append(hook)
+
     def run(self):
         while True:
             t_delta = self.clock.tick(self.fps)
-            s_delta = self.fps / 60
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     exit()
+            
+            self.screen.fill(color = 'black')
+
+            for run_hook in self.run_hooks:
+                run_hook(t_delta)
+
             for obj in ObjectStorage.get_objects():
-                obj.update(s_delta)
                 obj.draw(self.screen)
             pygame.display.flip()
